@@ -2,6 +2,7 @@ import { Redirect } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 
 import { Button, EmptyState, LoadingScreen, Screen } from '@/components/ui';
+import { useChatRealtime } from '@/lib/chat';
 import { useSession } from '@/lib/session';
 
 // Tout ce qui est sous (app) exige un compte complet (D6 : pas d'accès sans école partenaire).
@@ -21,5 +22,16 @@ export default function AppLayout() {
   if (!profile) return <Redirect href={session.user.user_metadata?.password_set ? '/infos' : '/password'} />;
   if (inFlow) return <LoadingScreen />;
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <ChatRealtime />
+      <Stack screenOptions={{ headerShown: false }} />
+    </>
+  );
+}
+
+/** Écoute les nouveaux messages tant qu'on est connecté (F-CHAT-04). */
+function ChatRealtime() {
+  useChatRealtime();
+  return null;
 }

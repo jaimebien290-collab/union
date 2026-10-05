@@ -28,6 +28,15 @@ const MESSAGES: Record<string, string> = {
   activity_started: 'Trop tard, cette activité a déjà commencé.',
   organizer_cannot_leave: "C'est toi qui organises : tu peux annuler l'activité, pas te désinscrire.",
   activities_title_check: 'Le titre doit faire entre 5 et 80 caractères.',
+  conversation_not_found: "Tu n'as plus accès à cette discussion.",
+  conversation_read_only: 'Cette discussion est fermée, on ne peut plus y écrire.',
+  too_many_messages: 'Doucement 😅 Attends une minute avant de renvoyer un message.',
+  user_unavailable: "Cette personne n'est pas disponible.",
+  report_target_not_found: "Ce contenu n'est plus disponible.",
+  report_own_content: 'Tu ne peux pas signaler ton propre contenu.',
+  too_many_reports: "Tu as atteint la limite de signalements pour aujourd'hui.",
+  not_moderator: 'Cette page est réservée aux ambassadeurs.',
+  moderator_concerned: 'Ce signalement te concerne : un autre ambassadeur doit le traiter.',
 };
 
 export function friendlyError(error: unknown): string {

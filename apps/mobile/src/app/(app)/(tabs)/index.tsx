@@ -9,6 +9,7 @@ import { CATEGORIES, colors, type CategoryCode } from '@union/shared';
 import { ActivityCard } from '@/components/activity-card';
 import { ActivityMap } from '@/components/activity-map';
 import { Button, Chip, EmptyState, LoadingScreen } from '@/components/ui';
+import { useUnreadNotificationCount } from '@/lib/chat';
 import { type Filters, hasFilters, NO_FILTERS, type Period, useFeed, useMapActivities, useOfficialThisWeek } from '@/lib/activities';
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -128,6 +129,7 @@ export default function HomeScreen() {
   const [view, setView] = useState<'list' | 'map'>('list');
   const [filters, setFilters] = useState(NO_FILTERS);
   const [searchText, setSearchText] = useState('');
+  const unreadNotifications = useUnreadNotificationCount();
 
   // La recherche part 300 ms après la dernière frappe.
   useEffect(() => {
@@ -146,15 +148,26 @@ export default function HomeScreen() {
         <Text accessibilityRole="header" className="font-display text-3xl text-night dark:text-cream">
           À venir
         </Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={view === 'list' ? 'Afficher la carte' : 'Afficher la liste'}
-          hitSlop={8}
-          onPress={() => setView(view === 'list' ? 'map' : 'list')}
-          className="flex-row items-center gap-1.5 rounded-full bg-white px-4 py-2 dark:bg-night">
-          <Ionicons name={view === 'list' ? 'map' : 'list'} size={18} color={colors.coral} />
-          <Text className="font-strong text-sm text-coral">{view === 'list' ? 'Carte' : 'Liste'}</Text>
-        </Pressable>
+        <View className="flex-row items-center gap-3">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={unreadNotifications ? `Notifications, ${unreadNotifications} nouvelles` : 'Notifications'}
+            hitSlop={8}
+            onPress={() => router.push('/notifications')}
+            className="h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-night">
+            <Ionicons name="notifications" size={20} color={colors.coral} />
+            {unreadNotifications ? <View className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-sun" /> : null}
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={view === 'list' ? 'Afficher la carte' : 'Afficher la liste'}
+            hitSlop={8}
+            onPress={() => setView(view === 'list' ? 'map' : 'list')}
+            className="flex-row items-center gap-1.5 rounded-full bg-white px-4 py-2 dark:bg-night">
+            <Ionicons name={view === 'list' ? 'map' : 'list'} size={18} color={colors.coral} />
+            <Text className="font-strong text-sm text-coral">{view === 'list' ? 'Carte' : 'Liste'}</Text>
+          </Pressable>
+        </View>
       </View>
 
       <View className="mx-5 mt-4 flex-row items-center gap-2 rounded-2xl border border-night/15 bg-white px-4 dark:border-cream/20 dark:bg-night">

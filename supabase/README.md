@@ -30,6 +30,12 @@ Dans **Authentication** :
 Sans le modèle d'email, Supabase envoie un lien au lieu du code à 6 chiffres. Sans le hook, l'app refuse quand même
 les emails hors école, mais un compte vide pourrait être créé en appelant l'API directement.
 
+## 3 bis. Temps réel de la messagerie
+
+La migration `social` ajoute la table `messages` à la publication `supabase_realtime`. Pour vérifier :
+**Database → Publications → supabase_realtime** doit lister `messages`. Sans cela, les messages n'arrivent
+qu'au rafraîchissement (toutes les 30 secondes).
+
 ## 4. Envoi des emails
 
 Le service d'envoi intégré est limité à quelques emails par heure et réservé aux tests. Avant d'ouvrir à plus de

@@ -12,6 +12,7 @@ import { categoryOf, Cover, StatusBadges } from '@/components/activity-card';
 import { regionAround } from '@/components/activity-map';
 import { Avatar, Button, EmptyState, LoadingScreen, Notice } from '@/components/ui';
 import { type Activity, formatRange, spotsLabel, useActivity, useActivityAction, useParticipants } from '@/lib/activities';
+import { useActivityConversationId } from '@/lib/chat';
 import { friendlyError } from '@/lib/errors';
 import { useSession } from '@/lib/session';
 
@@ -73,6 +74,7 @@ export default function ActivityScreen() {
   const join = useActivityAction('join_activity');
   const leave = useActivityAction('leave_activity');
   const cancel = useActivityAction('cancel_activity');
+  const conversationId = useActivityConversationId(id, activity?.my_status === 'registered');
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   // Heure d'ouverture de l'écran : sert à savoir si l'activité a commencé ou est terminée.
@@ -205,6 +207,9 @@ export default function ActivityScreen() {
             </View>
           ) : null}
 
+          {/* F-CHAT-01 : la discussion de groupe est ouverte aux inscrits. */}
+          {conversationId ? <Button label="Discussion du groupe" onPress={() => router.push(`/conversation/${conversationId}`)} /> : null}
+
           {activity.my_status === 'registered' && activity.status === 'published' ? (
             <Button label="Ajouter à mon calendrier" variant="secondary" onPress={() => addToCalendar(activity).catch(() => setError("Impossible d'ouvrir ton calendrier."))} />
           ) : null}
@@ -223,6 +228,10 @@ export default function ActivityScreen() {
               <Button label="Modifier" variant="secondary" onPress={() => router.push(`/activity/${activity.id}/edit`)} />
               <Button label="Annuler l'activité" variant="danger" loading={cancel.isPending} onPress={confirmCancel} />
             </View>
+          ) : null}
+
+          {!isOrganizer ? (
+            <Button label="Signaler cette activité" variant="ghost" onPress={() => router.push(`/report?type=activity&id=${activity.id}`)} />
           ) : null}
         </View>
       </ScrollView>

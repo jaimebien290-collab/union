@@ -54,6 +54,23 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 36 | Couvertures dans un bucket privé `covers`, lisibles dans l'école seulement | Même logique que les photos de profil |
 | 37 | Reporté : check-in (lot 4), partage par lien et duplication (F-ACT-12/13, S), mise à jour de l'événement du calendrier (F-CAL-03, S), centrage sur ma position (F-DISC-05), cache hors connexion (NF-PERF-03) | Priorités S ou dépendances d'autres lots ; à reprendre avant la bêta |
 
+## Lot 3 — Social (5 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 38 | **Lot coupé en deux.** Fait : messagerie, blocage, signalements, modération, notifications consultables dans l'app. Reste : envoi push, rappels J-1 / H-1, réglages par type de notification (F-NOTIF-01 à 12) | Les push ne se testent pas dans Expo Go et demandent un compte Expo + un build de développement. Rien n'est écrit tant que ce n'est pas testable |
+| 39 | Écran « Notifications » (cloche sur l'accueil) qui liste la file `notifications` | Sans push, c'était le seul moyen de voir une annulation, une place libérée ou le retour d'un signalement |
+| 40 | Discussion d'activité : membres = inscrits uniquement (pas la liste d'attente). Un trigger unique sur les inscriptions tient la liste des membres à jour | F-CHAT-01 ; une seule règle couvre inscription, désinscription, promotion et suppression de compte |
+| 41 | Lecture seule à J+7 et disparition de la liste à J+30 calculées à la volée depuis la date de fin | Pas de tâche planifiée à maintenir. La suppression réelle des messages à 12 mois (NF-RGPD-04) reste à planifier |
+| 42 | Blocage : masque les profils dans les deux sens (participants, fiches, photos), coupe les messages privés, et cache les messages de l'autre dans les discussions de groupe. Les activités de l'autre restent visibles | « Nous ne nous voyons plus dans les listes » (F-CHAT-05), interprété pour les listes de personnes |
+| 43 | Écran « Personnes bloquées » dans les réglages | Une personne bloquée n'étant plus visible nulle part, il fallait un endroit pour la débloquer |
+| 44 | Masquage automatique à 3 signalements : activités et messages seulement. Trois signalements sur une personne ne déclenchent rien d'automatique | F-MOD-02 parle de « contenu » ; la suspension est réservée à l'école (F-MOD-04, lot 6) |
+| 45 | Une activité masquée reste visible de son auteur et des modérateurs ; ses inscrits reçoivent « Cette activité a été retirée » | Le cahier ne précise pas |
+| 46 | « Avertir l'utilisateur » envoie une notification à l'auteur et clôt le signalement sans toucher au contenu | Trois actions distinctes dans F-MOD-03 |
+| 47 | F-MOD-07 : un modérateur ne voit pas et ne traite pas les signalements dont il est l'auteur du contenu (ou la personne visée) | Lecture retenue de « qui le concerne » |
+| 48 | Filtre d'insultes (F-CHAT-09) : une courte liste de mots en base ; le message part et un signalement automatique est créé | Volontairement minimal, à enrichir après la bêta |
+| 49 | Le signalement n'indique jamais son auteur à la personne visée ni aux modérateurs | Protéger ceux qui signalent |
+
 ### Point d'attention pour le build Android
 
 `react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production

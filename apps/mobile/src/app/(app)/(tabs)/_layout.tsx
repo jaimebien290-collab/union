@@ -4,6 +4,8 @@ import { type ColorValue, useColorScheme, View } from 'react-native';
 
 import { colors } from '@union/shared';
 
+import { useUnreadTotal } from '@/lib/chat';
+
 type IconName = keyof typeof Ionicons.glyphMap;
 
 const icon = (name: IconName) =>
@@ -21,6 +23,7 @@ function CreateIcon() {
 
 export default function TabsLayout() {
   const dark = useColorScheme() === 'dark';
+  const unread = useUnreadTotal();
 
   return (
     <Tabs
@@ -40,7 +43,15 @@ export default function TabsLayout() {
         name="create"
         options={{ title: 'Créer', tabBarLabel: () => null, tabBarIcon: CreateIcon, tabBarAccessibilityLabel: 'Créer une activité' }}
       />
-      <Tabs.Screen name="messages" options={{ title: 'Messages', tabBarIcon: icon('chatbubbles') }} />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: 'Messages',
+          tabBarIcon: icon('chatbubbles'),
+          tabBarBadge: unread > 0 ? unread : undefined,
+          tabBarBadgeStyle: { backgroundColor: colors.coral, color: '#fff' },
+        }}
+      />
       <Tabs.Screen name="profile" options={{ title: 'Profil', tabBarIcon: icon('person') }} />
     </Tabs>
   );
