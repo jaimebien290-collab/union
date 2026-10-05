@@ -130,6 +130,23 @@ export function useSession() {
   return value;
 }
 
+/** Position du campus de mon école : centre par défaut des cartes (F-DISC-04). */
+export function useCampus() {
+  const { profile } = useSession();
+  return useQuery({
+    queryKey: ['campus', profile?.school_id],
+    enabled: Boolean(profile),
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('schools').select('campus_lat, campus_lng').maybeSingle();
+      if (error) throw error;
+      return data?.campus_lat != null && data.campus_lng != null
+        ? { lat: data.campus_lat as number, lng: data.campus_lng as number }
+        : null;
+    },
+  });
+}
+
 export type School = { id: string; name: string; programs: string[] };
 
 /** L'école correspondant à l'email du compte connecté. Fonctionne avant que le profil existe. */

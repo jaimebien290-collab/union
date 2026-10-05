@@ -44,6 +44,12 @@
           "cameraPermission": false,
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "UNION ajoute à ton calendrier les activités que tu choisis."
+        }
       ]
     ],
     "experiments": {

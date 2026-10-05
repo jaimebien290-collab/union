@@ -37,6 +37,28 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 24 | Export des données : JSON en texte dans la feuille de partage, pas en fichier joint | Plus simple, aucune dépendance. À transformer en fichier si le groupe y tient |
 | 25 | Compte suspendu : déconnexion immédiate côté app + plus aucune lecture côté base. Le blocage de la connexion elle-même viendra avec la suspension (lot 3) | Personne ne peut encore suspendre un compte |
 
+## Lot 2 — Activités (5 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 26 | Création et modification par écriture directe dans `activities` (RLS + privilèges de colonne + triggers de validation) ; inscription, désinscription et annulation par fonctions serveur | Les triggers imposent auteur, école, fenêtre de dates, quota et badge officiel ; les places exigent un verrou transactionnel |
+| 27 | Liste d'attente : numéro d'ordre croissant jamais renuméroté ; premier arrivé, premier promu | Simple et sans ambiguïté |
+| 28 | Augmenter le nombre de places promeut la liste d'attente ; on ne peut pas descendre sous le nombre d'inscrits | Le cahier ne dit rien ; évite de désinscrire quelqu'un d'office |
+| 29 | On peut s'inscrire jusqu'au début de l'activité (comme la désinscription, F-ACT-07) | Le cahier ne fixe pas de limite pour l'inscription |
+| 30 | Une activité annulée reste visible avec le badge « Annulée » ; elle n'est plus modifiable | Les inscrits doivent comprendre pourquoi elle a disparu de leur agenda |
+| 31 | Les notifications (modification, annulation, place libérée) sont déposées dans une table `notifications` ; **rien n'est encore envoyé sur les téléphones** | L'envoi push (lot 3) demande un build de développement et un compte Expo ; la file sera consommée telle quelle |
+| 32 | Rappels J-1 et H-1, autorisation des notifications : lot 3, avec l'envoi | Même raison |
+| 33 | Adresses : géocodage de la Géoplateforme (`data.geopf.fr`) | C'est le successeur de l'API Adresse (BAN) prévue au §9.1, même données, sans clé |
+| 34 | Calendrier : fiche d'ajout native pré-remplie (`expo-calendar/legacy`) | Aucune permission à demander ; la nouvelle API d'expo-calendar ne fonctionne pas dans Expo Go |
+| 35 | Supprimer son compte annule ses activités à venir (inscrits prévenus) et libère ses places | Sinon des activités resteraient sans organisateur |
+| 36 | Couvertures dans un bucket privé `covers`, lisibles dans l'école seulement | Même logique que les photos de profil |
+| 37 | Reporté : check-in (lot 4), partage par lien et duplication (F-ACT-12/13, S), mise à jour de l'événement du calendrier (F-CAL-03, S), centrage sur ma position (F-DISC-05), cache hors connexion (NF-PERF-03) | Priorités S ou dépendances d'autres lots ; à reprendre avant la bêta |
+
+### Point d'attention pour le build Android
+
+`react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production
+Android (pas dans Expo Go). À créer dans Google Cloud avant le premier build EAS.
+
 ### Point d'attention pour le lot 6
 
 Le hook « Before User Created » refusera aussi les comptes admin dont l'email n'est pas celui d'une école

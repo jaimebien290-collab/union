@@ -19,6 +19,15 @@ const MESSAGES: Record<string, string> = {
   profile_exists: 'Ton compte existe déjà. Connecte-toi.',
   email_not_verified: "Ton email n'est pas encore vérifié.",
   not_authenticated: 'Ta session a expiré. Reconnecte-toi.',
+  start_out_of_range: "L'activité doit commencer dans au moins 30 minutes, et dans 6 mois au plus.",
+  official_not_allowed: 'Seuls les ambassadeurs peuvent publier une activité officielle.',
+  too_many_activities: "Tu as déjà créé 10 activités aujourd'hui. Reviens demain !",
+  activity_locked: 'Cette activité est terminée ou annulée, elle ne peut plus être modifiée.',
+  capacity_below_registered: "Il y a déjà plus d'inscrits que ce nombre de places.",
+  activity_not_found: "Cette activité n'est plus disponible.",
+  activity_started: 'Trop tard, cette activité a déjà commencé.',
+  organizer_cannot_leave: "C'est toi qui organises : tu peux annuler l'activité, pas te désinscrire.",
+  activities_title_check: 'Le titre doit faire entre 5 et 80 caractères.',
 };
 
 export function friendlyError(error: unknown): string {
