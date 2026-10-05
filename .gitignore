@@ -1,0 +1,30 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+apps/mobile/ios/
+apps/mobile/android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+.vercel
+
+# Supabase
+supabase/.branches
+supabase/.temp

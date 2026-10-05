@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Palette UNION (§12) — mêmes valeurs que packages/shared/src/colors.json. */
+@theme inline {
+  --color-coral: #ff6b4a;
+  --color-night: #1e2a4a;
+  --color-sun: #ffc94a;
+  --color-cream: #fff8f3;
+  --color-ink: #12182b;
+  --font-sans: var(--font-nunito);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-night);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+}

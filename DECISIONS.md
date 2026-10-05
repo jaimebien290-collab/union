@@ -1,0 +1,53 @@
+# Journal des décisions
+
+Décisions prises en cours de développement quand le cahier des spécifications ne tranche pas. La plus récente en bas.
+
+## Lot 0 — Fondations (5 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 1 | Workspaces **npm** plutôt que pnpm | npm est déjà installé sur le poste ; le cahier demande un « monorepo simple » |
+| 2 | **Expo SDK 57**, Next.js 16, **NativeWind 4.2.7 avec Tailwind 3** côté mobile (Tailwind 4 côté admin) | Versions stables au jour du démarrage. NativeWind 5 est encore en release candidate |
+| 3 | Une seule version de React (19.2.3, celle d'Expo) imposée par `overrides` à la racine | Expo ne supporte pas deux versions de React dans un monorepo |
+| 4 | Tests RLS sur **PGlite** (Postgres embarqué) avec un faux schéma `auth` | Pas de Docker sur le poste, donc pas de Supabase local. Les tests tournent en 3 s, y compris en CI. Limite : ce n'est pas l'instance Supabase réelle, à compléter par un test de bout en bout quand le projet existera |
+| 5 | Onglets en `expo-router/js-tabs` plutôt que les onglets natifs du gabarit | Le bouton central « Créer » demande une icône personnalisée |
+| 6 | Session Supabase stockée dans **AsyncStorage** | Recommandation Supabase ; SecureStore limite la taille des valeurs |
+| 7 | Identifiant d'app `fr.unionapp.union` (iOS et Android), schéma de lien `union://` | **À valider avant la première soumission store : non modifiable ensuite** |
+| 8 | Lecture des autres profils via la vue `public_profiles` (security definer) ; la table `profiles` ne renvoie que sa propre ligne | Garantit que email, date de naissance et points ne sortent jamais (F-PROF-02) |
+| 9 | Colonnes protégées de `profiles` (`role`, `points_balance`, `status`, `is_mentor`, `school_id`, `email`) par privilèges de colonne, pas par trigger | Plus simple et vérifiable par test |
+| 10 | Contrôle des 18 ans par trigger en base, en plus du contrôle applicatif à venir | Un `check` ne peut pas dépendre de la date du jour |
+| 11 | Un étudiant ne lit pas `email_domains`, `declared_student_count`, `subscription_ends_at` de son école | Données contractuelles, inutiles à l'app |
+| 12 | Un compte suspendu ou supprimé n'a plus d'« école courante » : il ne lit plus rien | Applique F-AUTH-09 au niveau des données, pas seulement à l'écran de connexion |
+| 13 | Sentry installé mais inactif tant que `EXPO_PUBLIC_SENTRY_DSN` est vide ; envoi des sourcemaps désactivé dans `eas.json` | Pas encore de compte Sentry |
+| 14 | Seed limité aux deux écoles ; pas de comptes étudiants | Créer des lignes `auth.users` à la main est fragile ; les comptes de test passeront par l'inscription (lot 1) |
+
+## Lot 1 — Compte et profil (5 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 15 | Inscription et « mot de passe oublié » suivent le même chemin : email → code → mot de passe | Un seul modèle d'email et un seul jeu d'écrans. Conséquence : quelqu'un qui a déjà un compte et refait « C'est parti » choisit simplement un nouveau mot de passe |
+| 16 | « 5 essais max » sur le code (F-AUTH-02) : on s'appuie sur la limitation de débit de Supabase Auth | Supabase ne propose pas de compteur d'essais par code. À revoir si l'équipe veut la règle exacte |
+| 17 | Le filtrage par domaine est appliqué trois fois : dans l'app, par un hook Supabase à la création du compte, et dans `complete_signup` | L'app seule ne suffit pas, l'API d'authentification est publique |
+| 18 | Mineur : le compte d'authentification est supprimé (`abandon_signup` côté app, et de nouveau dans `complete_signup`) | F-AUTH-04 « aucune donnée conservée », alors que le compte existe déjà après le code |
+| 19 | Suppression de compte : la ligne `auth.users` est réellement supprimée, le profil est gardé anonymisé (« Utilisateur supprimé »). D'où la suppression de la clé étrangère `profiles → auth.users` | L'email est libéré et effacé ; les futurs messages gardent un auteur |
+| 20 | Formation : liste définie par l'école (`schools.settings.programs`), saisie libre si la liste est vide | Une saisie libre casserait le filtre « formation » du dashboard et l'attribution des parrains |
+| 21 | Photos dans un bucket **privé**, lisibles seulement par les étudiants de la même école (URL signée d'une heure) | F-PROF-02 : profil visible de la même école uniquement |
+| 22 | Ordre des étapes : la photo vient après les CGU (et non avant) ; les CGU, la confidentialité et la charte s'acceptent par une seule case | L'envoi de la photo exige un profil existant ; une case = moins de friction (objectif 3 minutes) |
+| 23 | Reporté : autorisation des notifications (lot 2, avec les premières notifications), proposition de parrain (lot 5), profil public des autres étudiants avec message/bloquer/signaler (lots 2 et 3) | Aucun écran ne permet encore d'y accéder ; les notifications push ne marchent pas dans Expo Go sur Android |
+| 24 | Export des données : JSON en texte dans la feuille de partage, pas en fichier joint | Plus simple, aucune dépendance. À transformer en fichier si le groupe y tient |
+| 25 | Compte suspendu : déconnexion immédiate côté app + plus aucune lecture côté base. Le blocage de la connexion elle-même viendra avec la suspension (lot 3) | Personne ne peut encore suspendre un compte |
+
+### Point d'attention pour le lot 6
+
+Le hook « Before User Created » refusera aussi les comptes admin dont l'email n'est pas celui d'une école
+(super-admin UNION). Il faudra prévoir une liste d'exceptions à ce moment-là.
+
+### À faire valider par le groupe
+
+- Liste des formations ESTA dans `supabase/seed.sql` (« Cycle Bachelor », « Cycle Master ») : provisoire.
+- Adresse d'assistance `support@union-app.fr` : provisoire, le domaine reste à réserver.
+- Textes des CGU, de la confidentialité et de la charte dans l'app : provisoires, à valider juridiquement (lot 7).
+
+- Coordonnées du campus et effectif ESTA dans `supabase/seed.sql` : valeurs approximatives.
+- Couleurs par catégorie (`packages/shared/src/colors.json`) : proposition libre.
+- Icône et écran de démarrage : encore ceux du gabarit Expo.
