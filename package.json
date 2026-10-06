@@ -11,7 +11,8 @@
     "admin": "npm run dev --workspace @union/admin",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "test:db": "vitest run supabase/tests"
+    "test:db": "vitest run supabase/tests",
+    "db:bundle": "node supabase/bundle.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.0",

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from '@/components/map';
 
 import { colors } from '@union/shared';
 

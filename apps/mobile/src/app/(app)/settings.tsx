@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Linking, Share, Text } from 'react-native';
+import { Linking, Share, Text } from 'react-native';
 
 import { SUPPORT_EMAIL } from '@union/shared';
 
 import { Button, FormScreen, Notice } from '@/components/ui';
 import { removeAvatar } from '@/lib/avatar';
+import { Alert } from '@/lib/alert';
 import { friendlyError } from '@/lib/errors';
 import { useSession } from '@/lib/session';
 import { supabase } from '@/lib/supabase';

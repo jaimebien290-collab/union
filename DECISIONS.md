@@ -71,6 +71,21 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 48 | Filtre d'insultes (F-CHAT-09) : une courte liste de mots en base ; le message part et un signalement automatique est créé | Volontairement minimal, à enrichir après la bêta |
 | 49 | Le signalement n'indique jamais son auteur à la personne visée ni aux modérateurs | Protéger ceux qui signalent |
 
+## Lot 4 — Présence et engagement (6 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 50 | QR de présence = `activité.minute.signature`, signé avec un secret par activité gardé dans un schéma non exposé ; accepté pendant la minute en cours et la précédente | NF-SEC-03 : une capture d'écran partagée cesse de marcher en 2 minutes au plus |
+| 51 | L'organisateur ne scanne rien : sa présence est validée avec celle du premier participant | Il affiche le QR, il ne peut pas le scanner ; et seul, il ne gagne aucun point (pas d'activités fantômes) |
+| 52 | Pointage manuel réservé à l'organisateur et aux ambassadeurs, jamais pour soi-même | §4.3. **Risque connu : un organisateur peut cocher des absents.** La méthode (`qr` / `manual`) est enregistrée pour pouvoir le repérer |
+| 53 | Chaque crédit de points est unique par (utilisateur, raison, clé). Au-delà du plafond de 60/jour, la ligne est enregistrée à 0 point | Empêche un double crédit et garde la trace de la présence |
+| 54 | Le plafond quotidien se compte sur la journée UTC | Plus simple ; l'écart avec l'heure française est d'une ou deux heures autour de minuit |
+| 55 | Badge « Régulier » : au moins une présence dans chacune des 4 dernières semaines calendaires | Lecture retenue de « 1 activité par semaine pendant 4 semaines » |
+| 56 | « Pour toi » : barème du cahier, activités à venir où je ne suis pas inscrit et où il reste de la place, score minimum 2 | Avec un score de 1, toute activité de la semaine serait « pour toi » |
+| 57 | Points et rencontres lisibles par leur propriétaire uniquement ; les badges et le nombre d'activités réalisées font partie du profil public | F-PROF-02 |
+| 58 | Les fonctions internes (schéma `private`) ne sont plus exécutables par les utilisateurs, sauf celles dont les règles d'accès ont besoin | Défense en profondeur |
+| 59 | Reporté : boutique de goodies (lot 6, elle dépend du back-office), « top 20 % » (F-GAME-06, S), animation de déblocage des badges, points de parrainage (lot 5) | Dépendances ou priorité S |
+
 ### Point d'attention pour le build Android
 
 `react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production

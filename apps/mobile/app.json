@@ -23,7 +23,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -49,6 +49,14 @@
         "expo-calendar",
         {
           "calendarPermission": "UNION ajoute à ton calendrier les activités que tu choisis."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "UNION utilise l’appareil photo pour scanner le QR code de présence d’une activité.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
       ]
     ],

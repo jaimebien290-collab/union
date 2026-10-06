@@ -2,8 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Calendar from 'expo-calendar/legacy';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Linking, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { Linking, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import MapView, { Marker } from '@/components/map';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@union/shared';
@@ -13,7 +13,9 @@ import { regionAround } from '@/components/activity-map';
 import { Avatar, Button, EmptyState, LoadingScreen, Notice } from '@/components/ui';
 import { type Activity, formatRange, spotsLabel, useActivity, useActivityAction, useParticipants } from '@/lib/activities';
 import { useActivityConversationId } from '@/lib/chat';
+import { Alert } from '@/lib/alert';
 import { friendlyError } from '@/lib/errors';
+import { isCheckinOpen, useEncounters } from '@/lib/presence';
 import { useSession } from '@/lib/session';
 
 // F-ACT-08 : ouvre Plans (iOS) ou Google Maps (Android) sur l'itinéraire.
@@ -49,6 +51,9 @@ function Row({ icon, children }: { icon: keyof typeof Ionicons.glyphMap; childre
 function ParticipantsRow({ activity }: { activity: Activity }) {
   const { data } = useParticipants(activity.id);
   const shown = (data ?? []).slice(0, 6);
+  // F-MATCH-04 : combien de mes rencontres y vont.
+  const met = new Set((useEncounters().data ?? []).map((person) => person.user_id));
+  const familiar = (data ?? []).filter((person) => met.has(person.id)).length;
   return (
     <Pressable
       accessibilityRole="button"
@@ -63,6 +68,11 @@ function ParticipantsRow({ activity }: { activity: Activity }) {
         ))}
       </View>
       <Text className="font-semi text-sm text-night dark:text-cream">{spotsLabel(activity)} · voir la liste</Text>
+      {familiar > 0 ? (
+        <Text className="font-semi text-sm text-coral">
+          👋 {familiar} personne{familiar > 1 ? 's' : ''} que tu as rencontrée{familiar > 1 ? 's' : ''} y {familiar > 1 ? 'vont' : 'va'}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -94,6 +104,8 @@ export default function ActivityScreen() {
   const started = new Date(activity.starts_at).getTime() <= now;
   const open = activity.status === 'published' && !started;
   const full = activity.spots_left !== null && activity.spots_left <= 0;
+  const checkinOpen = isCheckinOpen(activity, now);
+  const canValidate = isOrganizer || profile?.role === 'ambassador';
 
   const run = async (action: typeof join, onDone?: (result: string | null) => void) => {
     setError('');
@@ -205,6 +217,14 @@ export default function ActivityScreen() {
               {/* §12 : venir seul n'est pas bizarre. */}
               <Text className="text-center font-body text-sm text-night/70 dark:text-cream/70">Beaucoup viennent seuls, c&apos;est fait pour ça 🙂</Text>
             </View>
+          ) : null}
+
+          {/* F-ACT-10 : pointage, de 30 min avant le début à 2 h après la fin. */}
+          {checkinOpen && canValidate ? (
+            <Button label="Valider les présences" onPress={() => router.push(`/activity/${activity.id}/checkin`)} />
+          ) : null}
+          {checkinOpen && activity.my_status === 'registered' && !isOrganizer ? (
+            <Button label="Scanner le QR de présence" onPress={() => router.push('/scan')} />
           ) : null}
 
           {/* F-CHAT-01 : la discussion de groupe est ouverte aux inscrits. */}

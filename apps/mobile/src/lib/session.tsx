@@ -20,11 +20,12 @@ export type Profile = {
   interests: CategoryCode[];
   role: 'student' | 'ambassador' | 'school_admin' | 'super_admin';
   is_mentor: boolean;
+  points_balance: number;
   status: 'active' | 'suspended' | 'deleted';
 };
 
 const PROFILE_COLUMNS =
-  'id, school_id, first_name, last_name, email, program, study_year, is_newcomer, bio, avatar_url, interests, role, is_mentor, status';
+  'id, school_id, first_name, last_name, email, program, study_year, is_newcomer, bio, avatar_url, interests, role, is_mentor, points_balance, status';
 
 async function fetchProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase.from('profiles').select(PROFILE_COLUMNS).eq('id', userId).maybeSingle();

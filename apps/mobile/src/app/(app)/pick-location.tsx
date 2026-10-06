@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from '@/components/map';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@union/shared';

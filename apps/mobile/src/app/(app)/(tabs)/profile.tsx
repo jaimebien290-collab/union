@@ -14,6 +14,8 @@ export default function ProfileScreen() {
     <Screen title="Profil">
       <ScrollView className="mt-6" contentContainerClassName="gap-4 pb-8" showsVerticalScrollIndicator={false}>
         <ProfileCard profile={profile} schoolName={school?.name} />
+        <Button label={`⭐ ${profile.points_balance} points · mes badges`} onPress={() => router.push('/points')} />
+        <Button label="Mes rencontres" variant="secondary" onPress={() => router.push('/encounters')} />
         {profile.role === 'ambassador' || profile.role === 'school_admin' ? (
           <Button label="Modération" onPress={() => router.push('/moderation')} />
         ) : null}

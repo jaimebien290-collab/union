@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, useColorScheme, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@union/shared';
@@ -19,6 +19,7 @@ import {
   useSendMessage,
   useSetMuted,
 } from '@/lib/chat';
+import { Alert } from '@/lib/alert';
 import { friendlyError } from '@/lib/errors';
 import { useSession } from '@/lib/session';
 

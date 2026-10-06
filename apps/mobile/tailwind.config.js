@@ -4,6 +4,9 @@ const colors = require('@union/shared/src/colors.json');
 module.exports = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
+  // Nécessaire sur le web : sans cela NativeWind lève une erreur en synchronisant le thème du navigateur.
+  // L'app suit toujours le thème du système.
+  darkMode: 'class',
   theme: {
     extend: {
       colors,

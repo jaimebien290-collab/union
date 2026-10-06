@@ -110,6 +110,13 @@ describe('check_school_domain (F-AUTH-01)', () => {
     expect(rows).toEqual([{ school_name: 'ESTA Belfort' }]);
   });
 
+  it("reconnaît les adresses étudiantes de l'ESTA", async () => {
+    const { rows } = await queryAs(db, null, `select school_name from public.check_school_domain($1)`, [
+      'prenom.nom@etudiants-esta.fr',
+    ]);
+    expect(rows).toEqual([{ school_name: 'ESTA Belfort' }]);
+  });
+
   it('ne renvoie rien pour un domaine inconnu ou un email mal formé', async () => {
     for (const email of ['lucas@gmail.com', 'esta-groupe.fr', '@esta-groupe.fr', 'lucas@sub.esta-groupe.fr']) {
       expect((await queryAs(db, null, `select * from public.check_school_domain($1)`, [email])).rows).toEqual([]);

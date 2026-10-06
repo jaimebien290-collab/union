@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { CATEGORIES, type CategoryCode } from '@union/shared';
 
 import { Avatar, Card, Chip, ChipGroup } from '@/components/ui';
+import { badgeOf, useProfileExtras } from '@/lib/presence';
 
 export type PublicProfile = {
   id: string;
@@ -21,6 +22,7 @@ const yearLabel = (year: number) => (year === 1 ? '1re année' : `${year}e anné
 
 /** Profil tel que le voient les étudiants de la même école (F-PROF-02) : jamais d'email ni de date de naissance. */
 export function ProfileCard({ profile, schoolName }: { profile: PublicProfile; schoolName?: string }) {
+  const extras = useProfileExtras(profile.id);
   const interests = CATEGORIES.filter((category) => profile.interests.includes(category.code));
   const studies = [profile.program, profile.study_year ? yearLabel(profile.study_year) : null].filter(Boolean).join(' · ');
 
@@ -46,6 +48,12 @@ export function ProfileCard({ profile, schoolName }: { profile: PublicProfile; s
         </View>
       ) : null}
       {profile.bio ? <Text className="mt-3 font-body text-base text-night dark:text-cream">{profile.bio}</Text> : null}
+      {extras ? (
+        <Text className="mt-3 font-semi text-sm text-night/70 dark:text-cream/70">
+          {extras.activitiesDone} activité{extras.activitiesDone > 1 ? 's' : ''} réalisée{extras.activitiesDone > 1 ? 's' : ''}
+          {extras.badges.length ? ` · ${extras.badges.map((code) => badgeOf(code)?.emoji).join(' ')}` : ''}
+        </Text>
+      ) : null}
       {interests.length ? (
         <View className="mt-3">
           <ChipGroup>

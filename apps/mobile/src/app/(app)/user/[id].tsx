@@ -1,13 +1,14 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 import { colors } from '@union/shared';
 
 import { ProfileCard, type PublicProfile } from '@/components/profile-card';
 import { Button, FormScreen, Notice } from '@/components/ui';
 import { openDirectConversation } from '@/lib/chat';
+import { Alert } from '@/lib/alert';
 import { friendlyError } from '@/lib/errors';
 import { useSession } from '@/lib/session';
 import { supabase } from '@/lib/supabase';

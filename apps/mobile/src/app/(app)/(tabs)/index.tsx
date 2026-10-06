@@ -10,6 +10,7 @@ import { ActivityCard } from '@/components/activity-card';
 import { ActivityMap } from '@/components/activity-map';
 import { Button, Chip, EmptyState, LoadingScreen } from '@/components/ui';
 import { useUnreadNotificationCount } from '@/lib/chat';
+import { useRecommended } from '@/lib/presence';
 import { type Filters, hasFilters, NO_FILTERS, type Period, useFeed, useMapActivities, useOfficialThisWeek } from '@/lib/activities';
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -55,6 +56,8 @@ function FeedList({ filters, onReset }: { filters: Filters; onReset: () => void 
   const filtered = hasFilters(filters);
   const activities = feed.data?.pages.flat() ?? [];
   const officialWeek = filtered ? [] : (official.data ?? []);
+  const recommended = useRecommended();
+  const forYou = filtered ? [] : (recommended.data ?? []);
 
   if (feed.isPending) return <LoadingScreen />;
   if (feed.isError) {
@@ -93,8 +96,23 @@ function FeedList({ filters, onReset }: { filters: Filters; onReset: () => void 
         />
       }
       ListHeaderComponent={
-        officialWeek.length ? (
+        officialWeek.length || forYou.length ? (
           <View className="gap-3">
+            {/* F-DISC-06 */}
+            {forYou.length ? (
+              <>
+                <Text accessibilityRole="header" className="font-strong text-lg text-night dark:text-cream">
+                  Pour toi
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-5" contentContainerClassName="gap-3 px-5">
+                  {forYou.map((activity) => (
+                    <ActivityCard key={activity.id} activity={activity} compact />
+                  ))}
+                </ScrollView>
+              </>
+            ) : null}
+            {officialWeek.length ? (
+              <>
             <Text accessibilityRole="header" className="font-strong text-lg text-night dark:text-cream">
               ⭐ Officiel cette semaine
             </Text>
@@ -104,6 +122,8 @@ function FeedList({ filters, onReset }: { filters: Filters; onReset: () => void 
                 <ActivityCard key={activity.id} activity={activity} compact />
               ))}
             </ScrollView>
+              </>
+            ) : null}
             <Text accessibilityRole="header" className="mt-2 font-strong text-lg text-night dark:text-cream">
               Toutes les activités
             </Text>
