@@ -102,6 +102,30 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 69 | Sondage d'intégration : une carte en haut du fil, pendant les 14 premiers jours puis à partir de J+60 ; « Passer » enregistre une réponse vide pour ne plus reposer la question | F-SURV-01 |
 | 70 | Reporté : durée d'un an et renouvellement du parrainage (F-MENT-09, S) ; l'export des données n'inclut pas encore les parrainages ni le sondage | À compléter avant la bêta |
 
+## Lot 6 — Back-office (6 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 71 | Le back-office n'utilise **aucune clé de service** : uniquement la clé publique et des fonctions SQL qui vérifient le rôle (`admin_*`, `dashboard_stats`) | NF-SEC-02 ; rien de sensible à héberger avec le site |
+| 72 | Comptes admin par **invitation** : on inscrit l'email, la personne crée son compte elle-même par code reçu par email (« Première connexion ») | F-SUP-02 sans clé de service. Le premier super-admin s'inscrit par une ligne SQL dans `admin_invites` |
+| 73 | Un même email ne peut pas être à la fois étudiant et admin | Un compte = un profil = un rôle |
+| 74 | Un admin école peut inviter un collègue pour sa propre école | Évite de passer par l'équipe UNION pour chaque ajout |
+| 75 | Le personnel n'apparaît jamais parmi les étudiants (participants, profils, parrains) et ne peut pas se connecter à l'app mobile | Ce sont des comptes de gestion |
+| 76 | L'admin voit la liste des inscrits (nom, email, formation, rôle, statut) pour gérer ambassadeurs et suspensions, mais aucune activité individuelle | Nécessaire à F-ADM-03 et F-MOD-04 ; les tables de points, rencontres et sondage lui restent fermées |
+| 77 | Suspension : immédiate et sans durée ; l'admin réactive le compte à la main. Les activités à venir du compte suspendu sont annulées | F-MOD-04 « temporairement ou définitivement » : la durée est laissée à l'admin plutôt qu'à un minuteur |
+| 78 | k-anonymat à 5 appliqué à : la population filtrée (réponse entièrement masquée), chaque segment formation / année, les nouveaux arrivants, les réponses au sondage, et toute moyenne calculée sur moins de 5 étudiants (indice de sociabilité, y compris par semaine) | Règle d'or du §7.2. **Limite connue** : en comparant deux filtres voisins on peut parfois déduire un petit groupe ; à traiter si le risque est jugé réel |
+| 79 | Les « rencontres » du dashboard sont calculées sur les présences de la période, dans toute l'école (on rencontre aussi des étudiants hors du filtre) | Définition de F-DASH-04 |
+| 80 | « Étudiants actifs » repose sur une date de dernière ouverture, enregistrée au plus une fois par heure | F-DASH-02 sans tracer chaque ouverture |
+| 81 | Export PDF = la page du tableau de bord mise en forme pour l'impression (« Enregistrer au format PDF »), et non `@react-pdf/renderer` | Même contenu (période, indicateurs, graphiques, définitions) sans dupliquer la mise en page. Le logo de l'école n'y figure pas encore |
+| 82 | Export Excel avec `exceljs` plutôt que SheetJS | Le paquet `xlsx` publié sur npm n'est plus maintenu |
+| 83 | Graphiques : une seule teinte, pas de double axe ; l'évolution hebdomadaire est en trois petits graphiques | Trois mesures d'échelles différentes |
+| 84 | Annonces : déposées dans les notifications de l'app ; le quota de 3 se compte sur 7 jours glissants | L'envoi push les reprendra telles quelles |
+| 85 | Goodies : pas d'image pour l'instant (le champ existe) ; l'admin voit le nom de l'étudiant sur une demande de retrait | Il faut savoir à qui remettre l'article |
+| 86 | Une école dont l'abonnement est terminé ou désactivée : inscriptions fermées, ses étudiants ne lisent plus rien. Les données sont conservées | F-SUP-04. **La suppression à 6 mois n'est pas automatisée** |
+| 87 | Une activité officielle créée par l'école n'inscrit pas l'admin ; les ambassadeurs valident les présences sur place | L'admin n'est pas un étudiant |
+| 88 | La modération du back-office se fait depuis un compte admin de l'école, pas depuis le super-admin | La file est propre à chaque école |
+| 89 | `check_admin_email` répond sans session si un email a un accès admin | Permet un message clair avant d'envoyer un code ; révèle seulement l'existence d'un accès |
+
 ### Point d'attention pour le build Android
 
 `react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production

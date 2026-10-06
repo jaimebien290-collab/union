@@ -1,41 +1,59 @@
-// Coquille de la page de connexion (F-ADM-01). L'authentification arrive au lot 6.
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useEffect, useState } from "react";
+
+import { Button, Field, Input, Notice } from "@/components/ui";
+import { friendly, supabase, useAdmin } from "@/lib/admin";
+
+// F-ADM-01 : connexion des admins (email + mot de passe). Les comptes se créent par invitation, voir /acces.
 export default function LoginPage() {
+  const router = useRouter();
+  const { session, context } = useAdmin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session && context) router.replace("/tableau-de-bord");
+  }, [session, context, router]);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+    setLoading(false);
+    if (error) setError(friendly(error));
+  };
+
   return (
     <main className="flex flex-1 items-center justify-center p-6">
-      <form className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-sm dark:bg-night">
-        <h1 className="text-3xl font-extrabold text-coral">UNION</h1>
-        <p className="mt-1 text-sm opacity-70">Espace établissement</p>
-
-        <label className="mt-8 block text-sm font-semibold" htmlFor="email">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          disabled
-          className="mt-1.5 h-12 w-full rounded-2xl border border-night/15 px-4 dark:border-cream/20"
-        />
-
-        <label className="mt-4 block text-sm font-semibold" htmlFor="password">
-          Mot de passe
-        </label>
-        <input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          disabled
-          className="mt-1.5 h-12 w-full rounded-2xl border border-night/15 px-4 dark:border-cream/20"
-        />
-
-        <button
-          type="submit"
-          disabled
-          className="mt-6 h-12 w-full rounded-2xl bg-coral font-bold text-white opacity-40"
-        >
-          Se connecter
-        </button>
-        <p className="mt-4 text-center text-xs opacity-60">Connexion bientôt disponible.</p>
+      <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-3xl bg-white p-8 shadow-sm">
+        <div>
+          <h1 className="text-3xl font-extrabold text-coral">UNION</h1>
+          <p className="text-sm text-night/70">Espace établissement</p>
+        </div>
+        <Field label="Email">
+          <Input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <Field label="Mot de passe">
+          <Input type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Field>
+        <Notice>{error}</Notice>
+        {session && context === null ? (
+          <Notice>Ce compte n&apos;a pas accès au back-office. Si vous avez été invité, passez par « Première connexion ».</Notice>
+        ) : null}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Connexion…" : "Se connecter"}
+        </Button>
+        <p className="text-center text-sm">
+          <Link href="/acces" className="font-semibold text-coral">
+            Première connexion ou mot de passe oublié
+          </Link>
+        </p>
       </form>
     </main>
   );

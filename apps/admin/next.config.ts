@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Le package partagé est en TypeScript source : Next doit le compiler.
+  transpilePackages: ["@union/shared"],
 };
 
 export default nextConfig;

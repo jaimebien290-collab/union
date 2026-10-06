@@ -2,7 +2,9 @@ import { ActivityIndicator, Text, View } from 'react-native';
 
 import { BADGES, colors } from '@union/shared';
 
-import { FormScreen } from '@/components/ui';
+import { router } from 'expo-router';
+
+import { Button, FormScreen } from '@/components/ui';
 import { formatShort } from '@/lib/activities';
 import { pointsReasonLabel, usePointHistory, useProfileExtras } from '@/lib/presence';
 import { useSession } from '@/lib/session';
@@ -26,6 +28,7 @@ export default function PointsScreen() {
       <Text className="font-body text-sm text-night/70 dark:text-cream/70">
         Les points se gagnent en venant vraiment aux activités : fais scanner ta présence sur place. 60 points maximum par jour.
       </Text>
+      <Button label="🎁 Boutique de goodies" onPress={() => router.push('/shop')} />
 
       <Text accessibilityRole="header" className="mt-2 font-strong text-lg text-night dark:text-cream">
         Badges
@@ -60,7 +63,7 @@ export default function PointsScreen() {
             <Text className="font-semi text-base text-night dark:text-cream">{pointsReasonLabel(transaction.reason)}</Text>
             <Text className="font-body text-xs text-night/60 dark:text-cream/60">{formatShort(transaction.created_at)}</Text>
           </View>
-          <Text className="font-display text-lg text-coral">+{transaction.amount}</Text>
+          <Text className="font-display text-lg text-coral">{transaction.amount > 0 ? `+${transaction.amount}` : transaction.amount}</Text>
         </View>
       ))}
     </FormScreen>

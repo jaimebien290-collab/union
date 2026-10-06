@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-/* Palette UNION (§12) — mêmes valeurs que packages/shared/src/colors.json. */
+/* Palette UNION (§12) — mêmes valeurs que packages/shared/src/colors.json.
+   Le back-office est en thème clair uniquement : il sert aussi de mise en page pour l'export PDF. */
 @theme inline {
   --color-coral: #ff6b4a;
   --color-night: #1e2a4a;
@@ -15,9 +16,12 @@ body {
   color: var(--color-night);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Export PDF (F-DASH-15) : la page du tableau de bord s'imprime sans le menu, sur fond blanc. */
+@media print {
   body {
-    background: var(--color-ink);
-    color: var(--color-cream);
+    background: #fff;
+  }
+  @page {
+    margin: 14mm;
   }
 }

@@ -92,6 +92,8 @@ const REASONS: Record<string, string> = {
   new_category: 'Nouvelle catégorie découverte',
   mentor_pair_attendance: 'Activité avec ton binôme de parrainage',
   mentee_accepted: 'Filleul accepté',
+  reward: 'Goodie échangé',
+  reward_refund: 'Goodie annulé, points rendus',
 };
 
 export const pointsReasonLabel = (reason: string) => REASONS[reason] ?? reason;
@@ -112,6 +114,51 @@ export function usePointHistory() {
 }
 
 export const badgeOf = (code: string) => BADGES.find((badge) => badge.code === code);
+
+// Boutique de goodies (F-GAME-04) -----------------------------------------------
+
+export type Reward = { id: string; name: string; description: string | null; cost_points: number; stock: number };
+export type Redemption = { id: string; reward_id: string; status: 'pending' | 'delivered' | 'cancelled'; pickup_code: string; cost_points: number; created_at: string };
+
+/** Le catalogue de mon école, du moins cher au plus cher. */
+export function useRewards() {
+  return useQuery({
+    queryKey: ['presence', 'rewards'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('rewards').select('id, name, description, cost_points, stock').order('cost_points');
+      if (error) throw error;
+      return data as Reward[];
+    },
+  });
+}
+
+/** Mes retraits, avec leur code à présenter. */
+export function useRedemptions() {
+  return useQuery({
+    queryKey: ['presence', 'redemptions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reward_redemptions')
+        .select('id, reward_id, status, pickup_code, cost_points, created_at')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Redemption[];
+    },
+  });
+}
+
+/** Échange des points contre un goodie : débit immédiat, code de retrait en retour (F-GAME-05). */
+export function useRedeem() {
+  const refresh = useRefreshAfterCheckin();
+  return useMutation({
+    mutationFn: async (rewardId: string) => {
+      const { data, error } = await supabase.rpc('redeem_reward', { p_reward_id: rewardId });
+      if (error) throw error;
+      return data as { pickup_code: string; reward: string };
+    },
+    onSuccess: refresh,
+  });
+}
 
 /** Badges et nombre d'activités réalisées d'un étudiant de mon école (F-PROF-02). */
 export function useProfileExtras(userId: string) {

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 
+import { AdminProvider } from "@/lib/admin";
+
 const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
@@ -16,7 +18,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${nunito.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <AdminProvider>{children}</AdminProvider>
+      </body>
     </html>
   );
 }

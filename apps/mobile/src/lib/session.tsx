@@ -78,8 +78,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // avec le message prévu sur l'écran d'accueil.
   const fetchCheckedProfile = useCallback(async (id: string) => {
     const result = await fetchProfile(id);
-    if (result && result.status !== 'active') {
+    // Les comptes du personnel passent par le back-office web, pas par l'app étudiante.
+    const isStaff = result?.role === 'school_admin' || result?.role === 'super_admin';
+    if (result && (result.status !== 'active' || isStaff)) {
       if (result.status === 'suspended') setNotice('Ton compte a été suspendu, contacte ton école.');
+      else if (isStaff) setNotice('Ce compte est un compte administrateur : connecte-toi au back-office web.');
       setInFlow(false);
       await supabase.auth.signOut({ scope: 'local' });
     }

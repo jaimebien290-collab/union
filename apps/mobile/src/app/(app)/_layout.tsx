@@ -1,9 +1,11 @@
 import { Redirect } from 'expo-router';
 import { Stack } from 'expo-router/stack';
+import { useEffect } from 'react';
 
 import { Button, EmptyState, LoadingScreen, Screen } from '@/components/ui';
 import { useChatRealtime } from '@/lib/chat';
 import { useSession } from '@/lib/session';
+import { supabase } from '@/lib/supabase';
 
 // Tout ce qui est sous (app) exige un compte complet (D6 : pas d'accès sans école partenaire).
 export default function AppLayout() {
@@ -33,5 +35,9 @@ export default function AppLayout() {
 /** Écoute les nouveaux messages tant qu'on est connecté (F-CHAT-04). */
 function ChatRealtime() {
   useChatRealtime();
+  // F-DASH-02 : signale l'ouverture de l'app (le serveur n'en garde qu'une par heure).
+  useEffect(() => {
+    supabase.rpc('touch_last_seen').then(() => undefined);
+  }, []);
   return null;
 }
