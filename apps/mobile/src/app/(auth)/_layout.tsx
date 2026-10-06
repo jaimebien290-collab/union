@@ -5,7 +5,7 @@ import { useSession } from '@/lib/session';
 import { SignupDraftProvider } from '@/lib/signup-draft';
 
 // Étapes qui n'ont de sens qu'avec une session ouverte (après la vérification du code).
-const NEEDS_SESSION = ['password', 'infos', 'interests', 'terms', 'photo'];
+const NEEDS_SESSION = ['password', 'infos', 'interests', 'terms', 'photo', 'mentor-offer'];
 
 export default function AuthLayout() {
   const { session, profile, loading, inFlow } = useSession();

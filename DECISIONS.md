@@ -86,6 +86,22 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 58 | Les fonctions internes (schéma `private`) ne sont plus exécutables par les utilisateurs, sauf celles dont les règles d'accès ont besoin | Défense en profondeur |
 | 59 | Reporté : boutique de goodies (lot 6, elle dépend du back-office), « top 20 % » (F-GAME-06, S), animation de déblocage des badges, points de parrainage (lot 5) | Dépendances ou priorité S |
 
+## Lot 5 — Parrainage et aide (6 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 60 | Une ligne par demande de parrain ; sans parrain disponible elle reste en file d'attente et est servie dès qu'un volontaire arrive ou qu'une place se libère | F-MENT-05 |
+| 61 | « Même année cible +1 » (F-MENT-04) lu comme : le parrain est dans l'année juste au-dessus du filleul | Formulation ambiguë du cahier, à confirmer |
+| 62 | Un parrain qui refuse ou laisse passer 72 h n'est plus sollicité pour cette demande | Évite de reproposer en boucle |
+| 63 | L'expiration des 72 h est vérifiée à chaque action de parrainage, sans tâche planifiée | Pas de cron à maintenir ; limite : si personne n'agit, une demande expirée attend la prochaine action |
+| 64 | À l'acceptation, parrain et filleul utilisent leur conversation privée habituelle, avec un message d'accueil envoyé au nom du parrain | Une seule conversation par binôme (F-MENT-06) |
+| 65 | Arrêter d'être volontaire ne met pas fin aux parrainages en cours | Le cahier ne précise pas ; moins brutal pour les filleuls |
+| 66 | Tout étudiant peut demander un parrain, pas seulement ceux qui ont coché « nouveau » ; la proposition en fin d'inscription est réservée aux nouveaux | F-MENT-03 : « disponible à tout moment depuis le profil » |
+| 67 | Les 15 points « parrain et filleul à la même activité » s'ajoutent après le pointage et n'apparaissent pas dans le total affiché à l'écran de scan | Ils sont visibles dans l'historique des points |
+| 68 | Ressources nationales « Besoin de parler » insérées par la migration (3114, Fil Santé Jeunes, Santé Psy Étudiant, Nightline) | **Numéros, horaires et liens à vérifier avant la mise en production** (F-HELP-02) |
+| 69 | Sondage d'intégration : une carte en haut du fil, pendant les 14 premiers jours puis à partir de J+60 ; « Passer » enregistre une réponse vide pour ne plus reposer la question | F-SURV-01 |
+| 70 | Reporté : durée d'un an et renouvellement du parrainage (F-MENT-09, S) ; l'export des données n'inclut pas encore les parrainages ni le sondage | À compléter avant la bêta |
+
 ### Point d'attention pour le build Android
 
 `react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production

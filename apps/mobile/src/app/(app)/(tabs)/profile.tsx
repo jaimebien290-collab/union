@@ -16,6 +16,9 @@ export default function ProfileScreen() {
         <ProfileCard profile={profile} schoolName={school?.name} />
         <Button label={`⭐ ${profile.points_balance} points · mes badges`} onPress={() => router.push('/points')} />
         <Button label="Mes rencontres" variant="secondary" onPress={() => router.push('/encounters')} />
+        <Button label="Parrainage" variant="secondary" onPress={() => router.push('/mentoring')} />
+        {/* F-HELP-01 : toujours accessible. */}
+        <Button label="Besoin de parler ?" variant="secondary" onPress={() => router.push('/help')} />
         {profile.role === 'ambassador' || profile.role === 'school_admin' ? (
           <Button label="Modération" onPress={() => router.push('/moderation')} />
         ) : null}

@@ -8,6 +8,7 @@ import { CATEGORIES, colors, type CategoryCode } from '@union/shared';
 
 import { ActivityCard } from '@/components/activity-card';
 import { ActivityMap } from '@/components/activity-map';
+import { SurveyCard } from '@/components/survey-card';
 import { Button, Chip, EmptyState, LoadingScreen } from '@/components/ui';
 import { useUnreadNotificationCount } from '@/lib/chat';
 import { useRecommended } from '@/lib/presence';
@@ -208,6 +209,12 @@ export default function HomeScreen() {
       <View className="py-3">
         <FilterBar filters={filters} onChange={setFilters} />
       </View>
+
+      {view === 'list' && !hasFilters(filters) ? (
+        <View className="px-5 pb-3">
+          <SurveyCard />
+        </View>
+      ) : null}
 
       {view === 'list' ? <FeedList filters={filters} onReset={reset} /> : <MapPane filters={filters} />}
     </SafeAreaView>
