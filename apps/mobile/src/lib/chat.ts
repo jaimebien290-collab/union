@@ -250,6 +250,8 @@ export function useNotifications() {
       const { data, error } = await supabase
         .from('notifications')
         .select('id, type, title, body, data, created_at, read_at')
+        // Les messages ont leur propre onglet et leur propre pastille.
+        .neq('type', 'message')
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
@@ -264,7 +266,7 @@ export function useUnreadNotificationCount() {
       queryKey: ['notifications', 'unread'],
       refetchInterval: 60_000,
       queryFn: async () => {
-        const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).is('read_at', null);
+        const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).is('read_at', null).neq('type', 'message');
         if (error) throw error;
         return count ?? 0;
       },

@@ -126,6 +126,29 @@ Décisions prises en cours de développement quand le cahier des spécifications
 | 88 | La modération du back-office se fait depuis un compte admin de l'école, pas depuis le super-admin | La file est propre à chaque école |
 | 89 | `check_admin_email` répond sans session si un email a un accès admin | Permet un message clair avant d'envoyer un code ; révèle seulement l'existence d'un accès |
 
+## Notifications push (6 octobre 2026)
+
+| # | Décision | Pourquoi |
+|---|---|---|
+| 90 | L'envoi se fait **depuis la base** : une tâche `pg_cron` passe chaque minute, dépose les rappels, puis envoie la file au service Expo Push avec `pg_net`. Pas d'Edge Function, pas de clé de service | Tout reste en SQL, testé en grande partie ; rien d'autre à déployer |
+| 91 | Rappel « demain » déposé la veille à partir de 18 h, rappel « dans 1 h » dans l'heure qui précède ; un seul de chaque par personne et par activité | F-NOTIF-01 |
+| 92 | Heures calmes 22 h – 8 h, **heure de Paris**, pour toutes les écoles. Les notifications retenues partent à 8 h ; rien de plus vieux que 24 h n'est envoyé | F-NOTIF-12. À revoir si une école hors métropole rejoint UNION |
+| 93 | Messages : une notification par conversation tant qu'elle n'est pas partie (« Plusieurs nouveaux messages »). Rien si la conversation est en sourdine | F-NOTIF-04 « regroupés », F-CHAT-07 |
+| 94 | Réglages par famille (rappels, activités, messages, parrainage, annonces, badges et goodies). Les retours de modération arrivent toujours | F-NOTIF-10 |
+| 95 | Un type coupé dans les réglages n'est pas envoyé sur le téléphone mais reste lisible dans l'écran Notifications de l'app | Ne rien perdre |
+| 96 | L'autorisation du système est demandée depuis l'écran Réglages → Notifications, après explication, et non pendant l'inscription | NF-STORE-04 ; garde l'inscription sous les 3 minutes. À rediscuter : le cahier la place à l'étape 8 de l'inscription |
+| 97 | Un téléphone ne reçoit que pour le dernier compte qui s'y est connecté ; le jeton est retiré à la déconnexion | Éviter qu'un téléphone prêté reçoive les messages d'un autre |
+| 98 | Non fait : nettoyage des jetons invalides d'après les accusés d'Expo, relance des inactifs (F-NOTIF-09, S), « une de tes rencontres organise une activité » (F-NOTIF-08, S) | À traiter après les premiers envois réels |
+
+### Ce qu'il faut pour que les push arrivent vraiment
+
+Le code est en place des deux côtés, mais **aucun push n'a encore été reçu sur un téléphone** : ils ne fonctionnent
+ni dans Expo Go ni dans le navigateur. Il faut :
+
+1. un compte Expo, puis `npx eas-cli init` dans `apps/mobile` (inscrit l'identifiant du projet dans `app.json`) ;
+2. un build de développement (`npx eas-cli build --profile development`) ;
+3. pour Android : un projet Firebase et sa clé FCM déposée dans EAS ; pour iOS : le compte Apple Developer.
+
 ### Point d'attention pour le build Android
 
 `react-native-maps` exige une **clé API Google Maps** dans `app.json` pour le build de développement et la production

@@ -4,6 +4,7 @@ import { createContext, type ReactNode, useCallback, useContext, useEffect, useM
 
 import type { CategoryCode } from '@union/shared';
 
+import { unregisterFromPush } from '@/lib/push';
 import { supabase } from '@/lib/supabase';
 
 export type Profile = {
@@ -99,6 +100,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const status = profile?.status;
 
   const signOut = useCallback(async () => {
+    // Ce téléphone ne doit plus recevoir les notifications du compte (tant que la session permet de le dire).
+    await unregisterFromPush().catch(() => undefined);
     // « local » : marche aussi hors connexion, ou si le compte vient d'être supprimé côté serveur.
     await supabase.auth.signOut({ scope: 'local' });
     setInFlow(false);

@@ -62,6 +62,7 @@ export default function SettingsScreen() {
   return (
     <FormScreen title="Réglages">
       <Notice>{error}</Notice>
+      <Button label="Notifications" variant="secondary" onPress={() => router.push('/notification-settings')} />
       <Button label="Besoin de parler ?" variant="secondary" onPress={() => router.push('/help')} />
       <Button label="Personnes bloquées" variant="secondary" onPress={() => router.push('/blocked')} />
       <Button label="CGU, confidentialité et charte" variant="secondary" onPress={() => router.push('/legal')} />

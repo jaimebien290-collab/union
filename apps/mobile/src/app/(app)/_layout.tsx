@@ -1,9 +1,10 @@
-import { Redirect } from 'expo-router';
+import { type Href, Redirect, router } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import { useEffect } from 'react';
 
 import { Button, EmptyState, LoadingScreen, Screen } from '@/components/ui';
 import { useChatRealtime } from '@/lib/chat';
+import { listenToPush, registerForPush } from '@/lib/push';
 import { useSession } from '@/lib/session';
 import { supabase } from '@/lib/supabase';
 
@@ -38,6 +39,10 @@ function ChatRealtime() {
   // F-DASH-02 : signale l'ouverture de l'app (le serveur n'en garde qu'une par heure).
   useEffect(() => {
     supabase.rpc('touch_last_seen').then(() => undefined);
+    // Si l'autorisation a déjà été donnée, on (ré)enregistre ce téléphone ; la demande elle-même se fait
+    // depuis l'écran des réglages de notifications, après explication.
+    registerForPush(false).catch(() => undefined);
+    return listenToPush((url) => router.push(url as Href));
   }, []);
   return null;
 }
